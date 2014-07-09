@@ -1,10 +1,17 @@
 require 'sinatra'
 require 'fileutils'
 
+helpers do
+  def get_ip
+    f = File.open("ips.txt", "a+")
+    ip = f.readlines.last.strip
+    f.close
+    ip
+  end
+end
+
 get "/" do
-  f = File.open("ips.txt", "a+")
-  ip = f.readlines.last.strip
-  f.close
+  ip = get_ip
   ip.nil? ? "Clean." : (redirect ip)
 end
 
@@ -22,8 +29,8 @@ get "/clear" do
 end
 
 get '/r/:target' do
-  ip = f.readlines.last.strip
-  case target
+  ip = get_ip
+  case params[:target]
   when "bt"
     redirect ip + ":9091"
   when "admin"
